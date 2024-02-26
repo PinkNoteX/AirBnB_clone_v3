@@ -1,16 +1,12 @@
 #!/usr/bin/python3
 """ web app """
-from flask import Flask, jsonify, make_response
+from flask import Flask, jsonify, make_response, Blueprint
 from models import storage
 from api.v1.views import app_views
 import os
-from flasgger import swagger
 from flask_cors import CORS
 
-app = flask(__name__)
-app_config['JSONIFY_PRETTYPRINT_REGULAR'] = True
-swagger = swagger(app)
-
+app = Flask(__name__)
 app.register_blueprint(app_views)
 CORS(app, resources={r"/api/*": {"origins": "0.0.0.0"}})
 
