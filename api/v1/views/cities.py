@@ -24,7 +24,7 @@ def get_cities(state_id):
                  methods=['GET'])
 def get_city_id(city_id):
     """ get city by id """
-    city = storage.get("City", city_id)
+    city = storage.get(City, city_id)
     if city is None:
         abort(404)
     return jsonify(city.to_dict())
@@ -34,7 +34,7 @@ def get_city_id(city_id):
                  strict_slashes=False)
 def delete_city(city_id):
     """delete city"""
-    c = storage.get("City", city_id)
+    c = storage.get(City, city_id)
     if c is None:
         abort(404)
     c.delete()

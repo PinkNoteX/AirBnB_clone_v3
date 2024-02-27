@@ -27,7 +27,7 @@ def get_states(state_id=None):
                  strict_slashes=False)
 def delete_state(state_id=None):
     """delete state"""
-    s = storage.get("State", state_id)
+    s = storage.get(State, state_id)
     if s is None:
         abort(404)
     s.delete()
