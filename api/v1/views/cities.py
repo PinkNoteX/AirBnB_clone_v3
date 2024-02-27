@@ -6,7 +6,9 @@ from models import storage
 from models.city import City
 from models.state import State
 
-@app_views.route("/states/<state_id>/cities", strict_slashes=False, methods=['GET'])
+
+@app_views.route("/states/<state_id>/cities", strict_slashes=False,
+                 methods=['GET'])
 def get_cities(state_id):
     """ get cities """
     s = storage.get(State, state_id)
@@ -18,7 +20,8 @@ def get_cities(state_id):
     return jsonify(c)
 
 
-@app_views.route("/cities/<city_id>", strict_slashes=False, methods=['GET'])
+@app_views.route("/cities/<city_id>", strict_slashes=False,
+                 methods=['GET'])
 def get_city_id(city_id):
     """ get city by id """
     city = storage.get("City", city_id)
@@ -39,7 +42,8 @@ def delete_city(city_id):
     return jsonify({}), 200
 
 
-@app_views.route('states/<state_id>/cities', methods=['POST'], strict_slashes=False)
+@app_views.route('states/<state_id>/cities', methods=['POST'],
+                 strict_slashes=False)
 def post_city(state_id):
     """post city"""
     key = "State." + str(state_id)
