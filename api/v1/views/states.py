@@ -7,59 +7,62 @@ from models.state import State
 
 
 @app_views.route('/states', methods=['GET'], strict_slashes=False)
-def get_states():
+@app_views.route("/states/<state_id>", strict_slashes=False, methods=['GET'])
+def get_states(state_id=None):
     """ get states """
     s = []
-    for state in storage.all("State").values():
-        s.append(state.to_dict())
-    return jsonify(s)
-
-
-@app_views.route('/states/<string:state_id>', methods=['GET'],
-                 strict_slashes=False)
-def get_state(state_id):
-    """ get state with id"""
-    s = storage.get("State", state_id)
-    if s is None:
+    key = "State." + str(state_id)
+    if state_id is None:
+        objs = storage.all(State)
+        for key, value in objs.items():
+            s.append(value.to_dict())
+    elif key in storage.all(State).keys():
+        return jsonify(storage.all(State)[key].to_dict())
+    else:
         abort(404)
-    return jsonify(s.to_dict())
+    return jsonify(s)
 
 
 @app_views.route('/states/<string:state_id>', methods=['DELETE'],
                  strict_slashes=False)
-def delete_state(state_id):
+def delete_state(state_id=None):
     """delete state"""
     s = storage.get("State", state_id)
     if s is None:
         abort(404)
     s.delete()
     storage.save()
-    return (jsonify({}))
+    return jsonify({}), 200
 
 
 @app_views.route('/states/', methods=['POST'], strict_slashes=False)
 def post_state():
     """create state"""
     if not request.get_json():
-        return make_response(jsonify({'error': 'Not a JSON'}), 400)
-    if 'name' not in request.get_json():
-        return make_response(jsonify({'error': 'Missing name'}), 400)
+        abort(400, "Not a JSON")
+    if "name" not in request.get_json():
+        abort(400, "Missing name")
     s = State(**request.get_json())
     s.save()
-    return make_response(jsonify(s.to_dict()), 201)
+    return jsonify(s.to_dict()), 201
+
 
 
 @app_views.route('/states/<string:state_id>', methods=['PUT'],
                  strict_slashes=False)
-def put_state(state_id):
+def put_state(state_id=None):
     """put state"""
-    s = storage.get("State", state_id)
-    if s is None:
+    k = "State." + str(state_id)
+    if k not in storage.all(State).keys():
         abort(404)
     if not request.get_json():
-        return make_response(jsonify({'error': 'Not a JSON'}), 400)
-    for a, v in request.get_json().items():
-        if a not in ['id', 'created_at', 'updated_at']:
-            setattr(s, a, v)
+        abort(400, "Not a JSON")
+
+    s = storage.get(State, state_id)
+    if s is None:
+        abort(404)
+    for key, val in request.get_json().items():
+        if key not in ["created_at", "updated_at", "id"]:
+            setattr(s, key, val)
     s.save()
-    return jsonify(s.to_dict())
+    return jsonify(s.to_dict()), 200
