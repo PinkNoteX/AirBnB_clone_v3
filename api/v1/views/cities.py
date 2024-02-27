@@ -14,10 +14,10 @@ def get_cities(state_id):
     s = storage.get(State, state_id)
     if s is None:
         abort(404)
-    c = []
-    for city in s.c:
-        c.append(city.to_dict())
-    return jsonify(c)
+    cities = []
+    for city in s.cities:
+        cities.append(city.to_dict())
+    return jsonify(cities)
 
 
 @app_views.route("/cities/<city_id>", strict_slashes=False,
@@ -60,7 +60,7 @@ def post_city(state_id):
 
 
 @app_views.route("/cities/<city_id>", strict_slashes=False, methods=["PUT"])
-def put_city(city_id=None):
+def put_city(city_id):
     """ put city """
     key = "City." + str(city_id)
     if key not in storage.all(City).keys():
